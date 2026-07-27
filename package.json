@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
-    "vercel-build": "cd frontend && npm install && npm run build && cd ../backend && npm install"
+    "build": "node -e \"const fs=require('fs'),{execSync}=require('child_process'); execSync('cd frontend && npm install && npm run build', {stdio:'inherit'}); fs.cpSync('frontend/dist', 'dist', {recursive: true}); console.log('✅ Dist synced to both frontend/dist and ./dist');\""
   },
   "dependencies": {
     "axios": "^1.18.1",
