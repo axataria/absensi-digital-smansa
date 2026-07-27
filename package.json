@@ -3,26 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node -e \"const fs=require('fs'),{execSync}=require('child_process'); execSync('cd frontend && npm install && npm run build', {stdio:'inherit'}); fs.cpSync('frontend/dist', 'dist', {recursive: true}); console.log('✅ Dist synced to both frontend/dist and ./dist');\""
+    "build": "echo 'root build'",
+    "postinstall": "cd backend && npm install"
   },
   "dependencies": {
-    "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
-    "cors": "^2.8.5",
-    "dotenv": "^17.3.1",
+    "cors": "^2.8.6",
+    "csv-parser": "^3.2.1",
+    "dotenv": "^17.4.2",
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
-    "lucide-react": "^1.27.0",
-    "multer": "^2.0.2",
-    "papaparse": "^5.5.4",
-    "pg": "^8.16.0",
+    "multer": "^2.2.0",
+    "pg": "^8.22.0",
     "pg-hstore": "^2.3.4",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^7.18.1",
-    "recharts": "^3.10.1",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.8"
   }
 }
