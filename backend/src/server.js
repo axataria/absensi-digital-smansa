@@ -61,15 +61,19 @@ const startServer = async () => {
     const seed = require('./seeders/seed');
     await seed();
 
-    app.listen(PORT, () => {
-      console.log(`\n🚀 E-Absensi API running on http://localhost:${PORT}`);
-      console.log(`   Environment: ${process.env.NODE_ENV}`);
-      console.log(`   Frontend URL: ${process.env.FRONTEND_URL}`);
-    });
+    if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+      app.listen(PORT, () => {
+        console.log(`\n🚀 E-Absensi API running on http://localhost:${PORT}`);
+        console.log(`   Environment: ${process.env.NODE_ENV}`);
+        console.log(`   Frontend URL: ${process.env.FRONTEND_URL}`);
+      });
+    }
   } catch (error) {
     console.error('❌ Server startup failed:', error);
-    process.exit(1);
+    if (!process.env.VERCEL) process.exit(1);
   }
 };
 
 startServer();
+
+module.exports = app;
