@@ -17,8 +17,8 @@ const Absensi = sequelize.define('Absensi', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM('Hadir', 'Sakit', 'Ijin', 'Dispen', 'Alpa'),
-    defaultValue: 'Hadir',
+    type: DataTypes.ENUM('Sakit', 'Ijin', 'Dispen', 'Alpa'),
+    allowNull: false,
   },
   keterangan: {
     type: DataTypes.TEXT,

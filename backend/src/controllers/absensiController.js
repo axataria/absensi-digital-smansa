@@ -3,6 +3,19 @@ const { Op, fn, col } = require('sequelize');
 const sequelize = require('../config/database');
 const ExcelJS = require('exceljs');
 
+// ─── Helper: Hitung hari kerja (Senin-Sabtu) antara dua tanggal ───
+function hitungHariKerja(startDate, endDate) {
+  let count = 0;
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+  while (current <= end) {
+    const day = current.getDay();
+    if (day !== 0) count++; // Skip Minggu (0 = Sunday)
+    current.setDate(current.getDate() + 1);
+  }
+  return count;
+}
+
 // GET /api/absensi?tanggal=&kelas_id=
 exports.index = async (req, res) => {
   try {
@@ -32,13 +45,14 @@ exports.index = async (req, res) => {
     });
 
     // Map to response format
+    // Tidak ada record = Hadir (default)
     const data = siswaList.map((s) => ({
       siswa_id: s.id,
       nis: s.nis,
       nama_lengkap: s.nama_lengkap,
       jenis_kelamin: s.jenis_kelamin,
       kelas: s.kelas,
-      status_absensi: s.absensi.length > 0 ? s.absensi[0].status : null,
+      status_absensi: s.absensi.length > 0 ? s.absensi[0].status : 'Hadir',
       keterangan: s.absensi.length > 0 ? s.absensi[0].keterangan : null,
       absensi_id: s.absensi.length > 0 ? s.absensi[0].id : null,
     }));
@@ -50,7 +64,7 @@ exports.index = async (req, res) => {
         tanggal: tanggalAbsen,
         kelas_id: kelas_id || null,
         total: data.length,
-        sudah_diabsen: data.filter((d) => d.status_absensi !== null).length,
+        sudah_diabsen: data.filter((d) => d.status_absensi !== 'Hadir').length,
       },
     });
   } catch (error) {
@@ -60,6 +74,7 @@ exports.index = async (req, res) => {
 };
 
 // POST /api/absensi — batch save/update
+// Logika baru: Hadir = hapus record (tidak perlu di DB), lainnya = upsert
 exports.store = async (req, res) => {
   const t = await sequelize.transaction();
 
@@ -74,7 +89,7 @@ exports.store = async (req, res) => {
     }
 
     const validStatuses = ['Hadir', 'Sakit', 'Ijin', 'Dispen', 'Alpa'];
-    const results = { berhasil: 0, gagal: 0, errors: [] };
+    const results = { berhasil: 0, gagal: 0, dihapus: 0, errors: [] };
 
     for (const item of data) {
       try {
@@ -90,31 +105,41 @@ exports.store = async (req, res) => {
           continue;
         }
 
-        // Upsert: insert or update based on unique key (siswa_id, tanggal_absen)
-        const [absensi, created] = await Absensi.findOrCreate({
-          where: { siswa_id: item.siswa_id, tanggal_absen },
-          defaults: {
-            siswa_id: item.siswa_id,
-            tanggal_absen,
-            status: item.status,
-            keterangan: item.keterangan || null,
-            diinput_oleh: req.user.id, // auto-set from authenticated user
-          },
-          transaction: t,
-        });
-
-        if (!created) {
-          await absensi.update(
-            {
+        if (item.status === 'Hadir') {
+          // Hadir = hapus record dari DB (jika ada)
+          const deleted = await Absensi.destroy({
+            where: { siswa_id: item.siswa_id, tanggal_absen },
+            transaction: t,
+          });
+          if (deleted > 0) results.dihapus++;
+          results.berhasil++;
+        } else {
+          // Sakit/Ijin/Dispen/Alpa = upsert ke DB
+          const [absensi, created] = await Absensi.findOrCreate({
+            where: { siswa_id: item.siswa_id, tanggal_absen },
+            defaults: {
+              siswa_id: item.siswa_id,
+              tanggal_absen,
               status: item.status,
-              keterangan: item.keterangan || absensi.keterangan,
+              keterangan: item.keterangan || null,
               diinput_oleh: req.user.id,
             },
-            { transaction: t }
-          );
-        }
+            transaction: t,
+          });
 
-        results.berhasil++;
+          if (!created) {
+            await absensi.update(
+              {
+                status: item.status,
+                keterangan: item.keterangan || absensi.keterangan,
+                diinput_oleh: req.user.id,
+              },
+              { transaction: t }
+            );
+          }
+
+          results.berhasil++;
+        }
       } catch (itemError) {
         results.errors.push({ siswa_id: item.siswa_id, pesan: itemError.message });
         results.gagal++;
@@ -150,6 +175,8 @@ exports.rekap = async (req, res) => {
     const siswaWhere = { status: 'aktif' };
     if (kelas_id) siswaWhere.kelas_id = kelas_id;
 
+    const totalHariEfektif = hitungHariKerja(start, end);
+
     const siswaList = await Siswa.findAll({
       where: siswaWhere,
       include: [
@@ -170,11 +197,14 @@ exports.rekap = async (req, res) => {
 
     const rekap = siswaList
       .map((s) => {
-        const counts = { Hadir: 0, Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
+        // Hanya hitung status tidak hadir dari DB
+        const counts = { Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
         s.absensi.forEach((a) => {
           if (counts[a.status] !== undefined) counts[a.status]++;
         });
-        const total = Object.values(counts).reduce((a, b) => a + b, 0);
+        const totalTidakHadir = Object.values(counts).reduce((a, b) => a + b, 0);
+        // Hadir = hari efektif − total tidak hadir
+        const hadir = Math.max(0, totalHariEfektif - totalTidakHadir);
 
         return {
           siswa_id: s.id,
@@ -182,15 +212,16 @@ exports.rekap = async (req, res) => {
           nama_lengkap: s.nama_lengkap,
           kelas: s.kelas,
           jenis_kelamin: s.jenis_kelamin,
+          Hadir: hadir,
           ...counts,
-          total_hari: total,
-          persentase_hadir: total > 0 ? Math.round((counts.Hadir / total) * 100) : 0,
+          total_hari: totalHariEfektif,
+          persentase_hadir: totalHariEfektif > 0 ? Math.round((hadir / totalHariEfektif) * 100) : 0,
         };
       })
       // Only include students who have at least one absence (Sakit/Ijin/Dispen/Alpa)
       .filter((r) => r.Sakit > 0 || r.Ijin > 0 || r.Dispen > 0 || r.Alpa > 0);
 
-    res.json({ success: true, data: rekap, meta: { start, end, kelas_id: kelas_id || null } });
+    res.json({ success: true, data: rekap, meta: { start, end, kelas_id: kelas_id || null, hari_efektif: totalHariEfektif } });
   } catch (error) {
     console.error('Absensi rekap error:', error);
     res.status(500).json({ success: false, message: 'Terjadi kesalahan server.' });
@@ -208,6 +239,8 @@ exports.export = async (req, res) => {
 
     const siswaWhere = { status: 'aktif' };
     if (kelas_id) siswaWhere.kelas_id = kelas_id;
+
+    const totalHariEfektif = hitungHariKerja(start, end);
 
     let targetKelasName = 'Semua Kelas';
     if (kelas_id) {
@@ -250,7 +283,7 @@ exports.export = async (req, res) => {
 
     sheet.mergeCells('A2:J2');
     const subTitleCell = sheet.getCell('A2');
-    subTitleCell.value = `Periode: ${start} s/d ${end} | Kelas: ${targetKelasName} | Dicetak: ${new Date().toLocaleDateString('id-ID')}`;
+    subTitleCell.value = `Periode: ${start} s/d ${end} | Kelas: ${targetKelasName} | Hari Efektif: ${totalHariEfektif} | Dicetak: ${new Date().toLocaleDateString('id-ID')}`;
     subTitleCell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF6B7280' } };
     subTitleCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
@@ -300,17 +333,20 @@ exports.export = async (req, res) => {
     });
 
     filteredSiswa.forEach((s, i) => {
-      const counts = { Hadir: 0, Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
+      // Hanya hitung status tidak hadir dari DB
+      const counts = { Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
       s.absensi.forEach((a) => { if (counts[a.status] !== undefined) counts[a.status]++; });
-      const total = Object.values(counts).reduce((a, b) => a + b, 0);
-      const persentase = total > 0 ? Math.round((counts.Hadir / total) * 100) : 0;
+      const totalTidakHadir = Object.values(counts).reduce((a, b) => a + b, 0);
+      // Hadir = hari efektif − total tidak hadir
+      const hadir = Math.max(0, totalHariEfektif - totalTidakHadir);
+      const persentase = totalHariEfektif > 0 ? Math.round((hadir / totalHariEfektif) * 100) : 0;
 
       const row = sheet.addRow([
         i + 1,
         s.nis,
         s.nama_lengkap,
         s.kelas ? s.kelas.nama_kelas : '-',
-        counts.Hadir,
+        hadir,
         counts.Sakit,
         counts.Ijin,
         counts.Dispen,

@@ -55,10 +55,9 @@ exports.summary = async (req, res) => {
         kehadiranHariIni[row.status] = parseInt(row.jumlah);
       });
 
-      // Siswa yang belum diabsen = Hadir (default)
-      const totalDiabsen = Object.values(kehadiranHariIni).reduce((a, b) => a + b, 0);
-      const belumDiabsen = totalSiswa - totalDiabsen;
-      // Don't add unrecorded as 'Hadir' — leave them as belum diabsen
+      // Tidak ada record = Hadir → Hadir = totalSiswa - total tidak hadir
+      const totalTidakHadir = kehadiranHariIni.Sakit + kehadiranHariIni.Ijin + kehadiranHariIni.Dispen + kehadiranHariIni.Alpa;
+      kehadiranHariIni.Hadir = totalSiswa - totalTidakHadir;
     }
 
     // Persentase kehadiran per kelas (hari ini)
@@ -78,10 +77,10 @@ exports.summary = async (req, res) => {
 
       if (totalSiswaKelas === 0) continue;
 
-      const hadirKelas = await Absensi.count({
+      // Hitung tidak hadir (record di DB = pasti tidak hadir)
+      const tidakHadirKelas = await Absensi.count({
         where: {
           tanggal_absen: today,
-          status: 'Hadir',
         },
         include: [{
           model: Siswa,
@@ -90,6 +89,9 @@ exports.summary = async (req, res) => {
           attributes: [],
         }],
       });
+
+      // Hadir = total siswa - tidak hadir
+      const hadirKelas = totalSiswaKelas - tidakHadirKelas;
 
       persentasePerKelas.push({
         kelas_id: k.id,
@@ -127,13 +129,19 @@ exports.summary = async (req, res) => {
       raw: true,
     });
 
-    // Group trend by date
+    // Group trend by date — hitung Hadir = totalSiswa - total tidak hadir per hari
     const trendMap = {};
     trendRaw.forEach((row) => {
       if (!trendMap[row.tanggal_absen]) {
         trendMap[row.tanggal_absen] = { tanggal: row.tanggal_absen, Hadir: 0, Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
       }
       trendMap[row.tanggal_absen][row.status] = parseInt(row.jumlah);
+    });
+
+    // Hitung Hadir per tanggal dari totalSiswa - total tidak hadir
+    Object.values(trendMap).forEach((day) => {
+      const totalTidakHadir = day.Sakit + day.Ijin + day.Dispen + day.Alpa;
+      day.Hadir = totalSiswa - totalTidakHadir;
     });
 
     const trendMingguan = Object.values(trendMap);
