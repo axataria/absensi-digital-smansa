@@ -1,6 +1,6 @@
 ﻿const { Siswa, Kelas } = require('../models');
 const { Op } = require('sequelize');
-const fs = require('fs');
+const { Readable } = require('stream');
 const csv = require('csv-parser');
 const { LogUpload } = require('../models');
 
@@ -150,7 +150,7 @@ exports.uploadCsv = async (req, res) => {
 
     // Parse CSV
     await new Promise((resolve, reject) => {
-      fs.createReadStream(req.file.path)
+      Readable.from(req.file.buffer)
         .pipe(csv())
         .on('data', (row) => {
           totalBaris++;
@@ -219,9 +219,6 @@ exports.uploadCsv = async (req, res) => {
       gagal,
       diupload_oleh: req.user.id,
     });
-
-    // Clean up uploaded file
-    fs.unlink(req.file.path, () => {});
 
     res.json({
       success: true,
