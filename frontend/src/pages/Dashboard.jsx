@@ -90,8 +90,8 @@ export default function Dashboard() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold w-max">
-              <Sparkles className="w-3.5 h-3.5 animate-ai-pulse text-indigo-400" />
-              AI Neural Executive Briefing
+              <img src="/assets/logo-smansa.png" alt="SMAN 1 Glagah" className="w-4 h-4 object-contain" />
+              SMAN 1 Glagah — Executive Briefing
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white leading-tight">
               Selamat Datang, {user?.nama}

@@ -40,15 +40,12 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* Header Logo */}
         <div className="flex items-center justify-between px-6 pt-6 pb-5 border-b border-slate-800/60">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 border border-indigo-400/30">
-              <Sparkles className="w-5 h-5 text-white animate-ai-pulse" />
-            </div>
+            <img src="/assets/logo-smansa.png" alt="SMAN 1 Glagah" className="w-10 h-10 object-contain drop-shadow-md" />
             <div>
-              <h2 className="text-white font-bold text-lg leading-tight tracking-tight flex items-center gap-1.5">
-                E-Absensi
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold uppercase">AI</span>
+              <h2 className="text-white font-bold text-base leading-tight tracking-tight flex items-center gap-1.5">
+                SMAN 1 Glagah
               </h2>
-              <p className="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">Minimalist AI OS</p>
+              <p className="text-indigo-400 text-[11px] font-semibold tracking-wide">E-Absensi Digital</p>
             </div>
           </div>
           <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white transition-colors">

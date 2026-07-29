@@ -62,9 +62,9 @@ export default function MainLayout() {
           </div>
 
           <div className="flex items-center gap-2 lg:gap-4">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Supabase Cloud</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
+              <img src="/assets/logo-smansa.png" alt="SMAN 1 Glagah" className="w-4 h-4 object-contain" />
+              <span className="hidden sm:inline">SMAN 1 Glagah</span>
             </div>
 
             <button

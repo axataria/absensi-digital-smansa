@@ -41,14 +41,17 @@ export default function Login() {
         <div className="bg-slate-900/90 border border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-indigo-950/50 backdrop-blur-xl">
           {/* Logo & Title */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 mb-4 shadow-lg shadow-indigo-500/20 border border-indigo-400/30">
-              <Sparkles className="w-7 h-7 text-white animate-ai-pulse" />
-            </div>
+            <img
+              src="/assets/logo-smansa.png"
+              alt="Logo SMAN 1 Glagah"
+              className="w-20 h-20 mx-auto mb-4 object-contain drop-shadow-xl hover:scale-105 transition-transform"
+            />
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-              E-Absensi
-              <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold uppercase">AI OS</span>
+              SMAN 1 Glagah
             </h1>
-            <p className="text-xs text-slate-400 mt-1.5 font-medium">Sistem Absensi Digital Siswa Minimalis</p>
+            <p className="text-xs text-indigo-300 mt-1 font-semibold uppercase tracking-wider">
+              E-Absensi Digital Siswa
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
