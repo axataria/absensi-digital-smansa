@@ -292,7 +292,14 @@ exports.export = async (req, res) => {
     sheet.getCell('C4').alignment = { horizontal: 'left', vertical: 'middle' };
 
     // ─── Table Data ───
-    siswaList.forEach((s, i) => {
+    // Filter: only include students with at least one absence (Sakit/Ijin/Dispen/Alpa)
+    const filteredSiswa = siswaList.filter((s) => {
+      const counts = { Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
+      s.absensi.forEach((a) => { if (counts[a.status] !== undefined) counts[a.status]++; });
+      return counts.Sakit > 0 || counts.Ijin > 0 || counts.Dispen > 0 || counts.Alpa > 0;
+    });
+
+    filteredSiswa.forEach((s, i) => {
       const counts = { Hadir: 0, Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
       s.absensi.forEach((a) => { if (counts[a.status] !== undefined) counts[a.status]++; });
       const total = Object.values(counts).reduce((a, b) => a + b, 0);

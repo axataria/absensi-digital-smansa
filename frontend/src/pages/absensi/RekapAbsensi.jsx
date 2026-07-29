@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
-import { BarChart3, CalendarDays, Filter, Download, ChevronDown, Sparkles, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { BarChart3, CalendarDays, Filter, Download, ChevronDown, Sparkles, FileSpreadsheet, Loader2, CheckCircle2 } from 'lucide-react';
 
 const STATUS_COLORS = {
   Hadir: 'text-emerald-600',
@@ -23,6 +23,7 @@ export default function RekapAbsensi() {
   const [rekap, setRekap] = useState([]);
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
     api.get('/kelas').then((res) => setKelasList(res.data.data || [])).catch(console.error);
@@ -40,6 +41,7 @@ export default function RekapAbsensi() {
       toast.error('Gagal memuat rekap absensi.');
     } finally {
       setLoading(false);
+      setHasFetched(true);
     }
   };
 
@@ -164,7 +166,7 @@ export default function RekapAbsensi() {
       </div>
 
       {/* Rekap Matrix Table */}
-      {rekap.length > 0 && (
+      {rekap.length > 0 ? (
         <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-slate-800">
@@ -207,7 +209,19 @@ export default function RekapAbsensi() {
             </table>
           </div>
         </div>
-      )}
+      ) : hasFetched && !loading ? (
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div className="flex flex-col items-center justify-center py-16 px-6">
+            <div className="p-4 rounded-full bg-emerald-50 border border-emerald-100 mb-4">
+              <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+            </div>
+            <h3 className="text-base font-bold text-slate-800 mb-1">Semua Hadir 🎉</h3>
+            <p className="text-sm text-slate-500 text-center max-w-md">
+              Tidak ada murid dengan keterangan absensi pada tanggal ini.
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
