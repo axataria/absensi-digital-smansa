@@ -1,8 +1,42 @@
-const bcrypt = require('bcryptjs');
 const { User, Kelas, Siswa } = require('../models');
+
+const seedProductionAdmin = async () => {
+  const email = process.env.SEED_ADMIN_EMAIL;
+  const password = process.env.SEED_ADMIN_PASSWORD;
+  const nama = process.env.SEED_ADMIN_NAME || 'Administrator';
+
+  if (!email || !password) {
+    throw new Error(
+      'SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD are required when seeding production.'
+    );
+  }
+
+  if (password.length < 12) {
+    throw new Error('SEED_ADMIN_PASSWORD must be at least 12 characters.');
+  }
+
+  const [, created] = await User.findOrCreate({
+    where: { email },
+    defaults: {
+      nama,
+      email,
+      password,
+      role: 'admin',
+    },
+  });
+
+  console.log(
+    created ? '✅ Production administrator created' : '✅ Production administrator exists'
+  );
+};
 
 const seed = async () => {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      await seedProductionAdmin();
+      return;
+    }
+
     // ─── Users ───
     const admin = await User.findOrCreate({
       where: { email: 'admin@sekolah.sch.id' },
@@ -105,10 +139,7 @@ const seed = async () => {
     }
     console.log('✅ Siswa seeded (24 siswa)');
 
-    console.log('\n🎉 Semua data berhasil di-seed!');
-    console.log('   Admin: admin@sekolah.sch.id / admin123');
-    console.log('   Guru1: guru1@sekolah.sch.id / guru123');
-    console.log('   Guru2: guru2@sekolah.sch.id / guru123');
+    console.log('\n🎉 Development data seeded');
 
   } catch (error) {
     console.error('❌ Seeding error:', error);

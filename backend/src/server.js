@@ -29,22 +29,38 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// ─── Lazy DB initialization (runs once on first request) ───
+// ─── Lazy DB initialization (runs once per server instance) ───
 let dbInitialized = false;
-const initDB = async () => {
-  if (dbInitialized) return;
-  try {
-    await sequelize.authenticate();
-    console.log('✅ Database connected');
-    await sequelize.sync();
-    console.log('✅ Database tables synced');
-    const seed = require('./seeders/seed');
-    await seed();
-    dbInitialized = true;
-  } catch (error) {
-    console.error('❌ DB init failed:', error.message);
-    throw error;
+let dbInitPromise = null;
+
+const initDB = () => {
+  if (dbInitialized) return Promise.resolve();
+
+  if (!dbInitPromise) {
+    dbInitPromise = (async () => {
+      await sequelize.authenticate();
+      console.log('✅ Database connected');
+      await sequelize.sync();
+      console.log('✅ Database tables synced');
+
+      const shouldSeed = process.env.NODE_ENV !== 'production'
+        || process.env.SEED_DATABASE === 'true';
+
+      if (shouldSeed) {
+        const seed = require('./seeders/seed');
+        await seed();
+      }
+
+      dbInitialized = true;
+    })().catch((error) => {
+      // Allow a later request to retry after a transient connection failure.
+      dbInitPromise = null;
+      console.error('❌ DB init failed:', error.message);
+      throw error;
+    });
   }
+
+  return dbInitPromise;
 };
 
 // Init DB middleware — runs once on first API request
