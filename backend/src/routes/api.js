@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
 
 const { authenticate, checkRole } = require('../middleware/auth');
 const authController = require('../controllers/authController');
@@ -12,17 +11,8 @@ const absensiController = require('../controllers/absensiController');
 const userController = require('../controllers/userController');
 
 // ─── Multer config for CSV upload ───
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
     if (allowedTypes.includes(file.mimetype) || file.originalname.endsWith('.csv')) {

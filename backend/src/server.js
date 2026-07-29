@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 
 // Only load dotenv if .env file exists (not on Vercel)
 try { require('dotenv').config(); } catch (e) {}
@@ -21,13 +20,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// ─── Ensure uploads directory exists ───
-const fs = require('fs');
-const uploadsDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 // ─── Lazy DB initialization (runs once per server instance) ───
 let dbInitialized = false;
