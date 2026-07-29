@@ -62,7 +62,7 @@ export default function SiswaList() {
             <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-ai-pulse" />
             AI Student Database
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             Data Siswa
           </h1>
           <p className="text-xs text-slate-500 mt-1">Kelola direktori siswa terdaftar pada Supabase Database</p>
@@ -70,8 +70,8 @@ export default function SiswaList() {
         {isAdmin() && (
           <button
             onClick={() => setModal({ open: true, mode: 'add', data: null })}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700
-                       text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all hover:scale-105"
+            className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700
+                       text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all hover:scale-105 w-full sm:w-auto justify-center"
           >
             <Plus className="w-4 h-4" /> Tambah Siswa Baru
           </button>
@@ -79,7 +79,7 @@ export default function SiswaList() {
       </div>
 
       {/* Filters */}
-      <div className="ai-card-glow rounded-3xl p-4 flex flex-col sm:flex-row gap-3">
+      <div className="ai-card-glow rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -104,7 +104,7 @@ export default function SiswaList() {
       </div>
 
       {/* Matrix Table */}
-      <div className="ai-card-glow rounded-3xl overflow-hidden">
+      <div className="ai-card-glow rounded-2xl sm:rounded-3xl overflow-hidden">
         {loading ? (
           <div className="p-6 space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="skeleton h-12 rounded-2xl" />)}</div>
         ) : siswa.length === 0 ? (
@@ -114,13 +114,13 @@ export default function SiswaList() {
             <table className="w-full text-sm text-slate-800">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200/80">
-                  <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400 w-14">No</th>
-                  <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">NIS</th>
-                  <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Nama Lengkap</th>
-                  <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Kelas</th>
-                  <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">JK</th>
-                  <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Status</th>
-                  {isAdmin() && <th className="text-center px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Aksi</th>}
+                  <th className="text-left px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400 w-10 sm:w-14">No</th>
+                  <th className="text-left px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">NIS</th>
+                  <th className="text-left px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Nama</th>
+                  <th className="text-left px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Kelas</th>
+                  <th className="text-left px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">JK</th>
+                  <th className="text-left px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Status</th>
+                  {isAdmin() && <th className="text-center px-3 sm:px-5 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Aksi</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

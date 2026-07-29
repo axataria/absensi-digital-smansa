@@ -71,13 +71,13 @@ export default function AICommandBar({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 px-3 sm:px-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
       <div 
-        className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-indigo-100 overflow-hidden transition-all transform animate-scaleUp"
+        className="w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-indigo-100 overflow-hidden transition-all transform animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Header */}
-        <form onSubmit={handlePromptSubmit} className="relative flex items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+        <form onSubmit={handlePromptSubmit} className="relative flex items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-md shadow-indigo-200 mr-3">
             <Sparkles className="w-4 h-4 text-white animate-ai-pulse" />
           </div>
@@ -86,8 +86,8 @@ export default function AICommandBar({ isOpen, onClose }) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tanyakan atau perintahkan AI (cth: 'Input absensi X-1', 'Rekap bulan ini')..."
-            className="w-full text-base bg-transparent border-none text-slate-800 placeholder-slate-400 focus:outline-none font-medium"
+            placeholder="Perintahkan AI..."
+            className="w-full text-sm sm:text-base bg-transparent border-none text-slate-800 placeholder-slate-400 focus:outline-none font-medium"
           />
           {isProcessing ? (
             <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100 animate-pulse">

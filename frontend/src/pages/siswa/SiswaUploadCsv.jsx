@@ -58,14 +58,14 @@ export default function SiswaUploadCsv() {
           <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-ai-pulse" />
           AI Batch Data Import
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
           Import Data Siswa (CSV)
         </h1>
         <p className="text-xs text-slate-500 mt-1">Unggah file CSV untuk mengimpor atau memperbarui data siswa secara massal</p>
       </div>
 
       {/* Format Info Card */}
-      <div className="ai-card-glow rounded-3xl p-5 bg-gradient-to-r from-indigo-50/50 to-violet-50/50 border border-indigo-100">
+      <div className="ai-card-glow rounded-2xl sm:rounded-3xl p-4 sm:p-5 bg-gradient-to-r from-indigo-50/50 to-violet-50/50 border border-indigo-100">
         <p className="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
           <FileSpreadsheet className="w-4 h-4 text-indigo-600" /> Format Kolom CSV AI Engine:
         </p>

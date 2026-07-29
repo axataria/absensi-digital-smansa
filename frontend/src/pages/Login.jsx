@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogIn, Mail, Lock, Eye, EyeOff, Sparkles, Zap, ShieldCheck } from 'lucide-react';
+import { LogIn, Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Login() {
@@ -30,12 +30,6 @@ export default function Login() {
     }
   };
 
-  const handleFillDemo = (demoEmail, demoPass) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    toast.success(`Demo credentials set: ${demoEmail}`, { icon: '🔑' });
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden ai-glow-bg">
       {/* AI Ambient Glowing Light Orbs */}
@@ -44,7 +38,7 @@ export default function Login() {
 
       <div className="relative w-full max-w-md">
         {/* Minimalist AI Glass Card */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl shadow-indigo-950/50 backdrop-blur-xl">
+        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-indigo-950/50 backdrop-blur-xl">
           {/* Logo & Title */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 mb-4 shadow-lg shadow-indigo-500/20 border border-indigo-400/30">
@@ -125,34 +119,6 @@ export default function Login() {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Credentials */}
-          <div className="mt-8 pt-6 border-t border-slate-800/80">
-            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-              <span>Demo Quick Login</span>
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleFillDemo('admin@sekolah.sch.id', 'admin123')}
-                className="px-3 py-2 rounded-xl bg-slate-800/60 hover:bg-indigo-600/20 border border-slate-700/60 hover:border-indigo-500/40 text-left transition-all group"
-              >
-                <p className="text-[11px] font-bold text-slate-200 group-hover:text-indigo-300">Admin Demo</p>
-                <p className="text-[10px] text-slate-400">admin@sekolah.sch.id</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleFillDemo('guru1@sekolah.sch.id', 'guru123')}
-                className="px-3 py-2 rounded-xl bg-slate-800/60 hover:bg-violet-600/20 border border-slate-700/60 hover:border-violet-500/40 text-left transition-all group"
-              >
-                <p className="text-[11px] font-bold text-slate-200 group-hover:text-violet-300">Guru Demo</p>
-                <p className="text-[10px] text-slate-400">guru1@sekolah.sch.id</p>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

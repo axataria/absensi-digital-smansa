@@ -86,7 +86,7 @@ export default function RekapAbsensi() {
             <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-ai-pulse" />
             AI Analytical Rekap Matrix
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             Rekapitulasi Absensi
           </h1>
           <p className="text-xs text-slate-500 font-medium">Ringkasan kehadiran siswa periode {startDate} s/d {endDate}</p>
@@ -94,7 +94,7 @@ export default function RekapAbsensi() {
       </div>
 
       {/* Filter Controls Card */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-2xs">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="flex flex-col gap-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
@@ -147,7 +147,7 @@ export default function RekapAbsensi() {
           <button
             onClick={fetchRekap}
             disabled={loading}
-            className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs font-semibold shadow-md shadow-indigo-500/20 transition-all disabled:opacity-50"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs font-semibold shadow-md shadow-indigo-500/20 transition-all disabled:opacity-50"
           >
             {loading ? 'AI Fetching...' : 'Tampilkan Rekap AI'}
           </button>
@@ -165,17 +165,17 @@ export default function RekapAbsensi() {
 
       {/* Rekap Matrix Table */}
       {rekap.length > 0 && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-slate-800">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400 w-14">No</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">NIS</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Nama Siswa</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Kelas</th>
+                  <th className="text-left px-3 sm:px-6 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400 w-10 sm:w-14">No</th>
+                  <th className="text-left px-3 sm:px-6 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">NIS</th>
+                  <th className="text-left px-3 sm:px-6 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Nama Siswa</th>
+                  <th className="text-left px-3 sm:px-6 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider text-slate-400">Kelas</th>
                   {['Hadir', 'Sakit', 'Ijin', 'Dispen', 'Alpa'].map((s) => (
-                    <th key={s} className={`text-center px-4 py-4 text-xs font-bold uppercase tracking-wider ${STATUS_COLORS[s]}`}>{s}</th>
+                    <th key={s} className={`text-center px-2 sm:px-4 py-3 sm:py-4 text-xs font-bold uppercase tracking-wider ${STATUS_COLORS[s]}`}>{s}</th>
                   ))}
                   <th className="text-center px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-400">% Hadir</th>
                 </tr>
@@ -183,10 +183,10 @@ export default function RekapAbsensi() {
               <tbody className="divide-y divide-slate-100">
                 {rekap.map((row, i) => (
                   <tr key={row.siswa_id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4 text-xs font-bold text-slate-400">{i + 1}</td>
-                    <td className="px-6 py-4 font-mono text-xs font-semibold text-slate-500">{row.nis}</td>
-                    <td className="px-6 py-4 font-bold text-slate-900">{row.nama_lengkap}</td>
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-600">{row.kelas?.nama_kelas || '-'}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs font-bold text-slate-400">{i + 1}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs font-semibold text-slate-500">{row.nis}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-slate-900 text-xs sm:text-sm">{row.nama_lengkap}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-slate-600">{row.kelas?.nama_kelas || '-'}</td>
                     <td className="text-center px-4 py-4 font-bold text-emerald-600">{row.Hadir}</td>
                     <td className="text-center px-4 py-4 font-bold text-amber-600">{row.Sakit}</td>
                     <td className="text-center px-4 py-4 font-bold text-blue-600">{row.Ijin}</td>

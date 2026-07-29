@@ -54,21 +54,21 @@ export default function KelasList() {
             <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-ai-pulse" />
             AI Class Architecture
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             Kelola Data Kelas
           </h1>
           <p className="text-xs text-slate-500 mt-1">Struktur organisasi kelas dan penugasan wali kelas</p>
         </div>
         <button
           onClick={() => setModal({ open: true, mode: 'add', data: null })}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700
-                     text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all hover:scale-105"
+          className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700
+                     text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all hover:scale-105 w-full sm:w-auto justify-center"
         >
           <Plus className="w-4 h-4" /> Tambah Kelas Baru
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {loading ? (
           [...Array(6)].map((_, i) => <div key={i} className="skeleton h-36 rounded-3xl" />)
         ) : kelas.length === 0 ? (
@@ -77,7 +77,7 @@ export default function KelasList() {
           </div>
         ) : (
           kelas.map((k) => (
-            <div key={k.id} className="ai-card-glow rounded-3xl p-6 flex flex-col justify-between hover:-translate-y-1 transition-all">
+            <div key={k.id} className="ai-card-glow rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between hover:-translate-y-1 transition-all">
               <div>
                 <div className="flex items-start justify-between mb-3">
                   <div>
