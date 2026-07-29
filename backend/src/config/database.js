@@ -1,4 +1,5 @@
 ﻿const { Sequelize } = require('sequelize');
+const pg = require('pg');
 require('dotenv').config();
 
 // â”€â”€â”€ Supabase (PostgreSQL) connection â”€â”€â”€
@@ -6,6 +7,9 @@ require('dotenv').config();
 // Falls back to discrete DB_* variables if DATABASE_URL is not set.
 const commonOptions = {
   dialect: 'postgres',
+  // Sequelize loads dialect drivers dynamically, which Vercel cannot trace.
+  // Passing pg explicitly ensures it is included in the serverless bundle.
+  dialectModule: pg,
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: {
     max: 10,
