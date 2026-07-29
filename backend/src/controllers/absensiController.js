@@ -168,24 +168,27 @@ exports.rekap = async (req, res) => {
       ],
     });
 
-    const rekap = siswaList.map((s) => {
-      const counts = { Hadir: 0, Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
-      s.absensi.forEach((a) => {
-        if (counts[a.status] !== undefined) counts[a.status]++;
-      });
-      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const rekap = siswaList
+      .map((s) => {
+        const counts = { Hadir: 0, Sakit: 0, Ijin: 0, Dispen: 0, Alpa: 0 };
+        s.absensi.forEach((a) => {
+          if (counts[a.status] !== undefined) counts[a.status]++;
+        });
+        const total = Object.values(counts).reduce((a, b) => a + b, 0);
 
-      return {
-        siswa_id: s.id,
-        nis: s.nis,
-        nama_lengkap: s.nama_lengkap,
-        kelas: s.kelas,
-        jenis_kelamin: s.jenis_kelamin,
-        ...counts,
-        total_hari: total,
-        persentase_hadir: total > 0 ? Math.round((counts.Hadir / total) * 100) : 0,
-      };
-    });
+        return {
+          siswa_id: s.id,
+          nis: s.nis,
+          nama_lengkap: s.nama_lengkap,
+          kelas: s.kelas,
+          jenis_kelamin: s.jenis_kelamin,
+          ...counts,
+          total_hari: total,
+          persentase_hadir: total > 0 ? Math.round((counts.Hadir / total) * 100) : 0,
+        };
+      })
+      // Only include students who have at least one absence (Sakit/Ijin/Dispen/Alpa)
+      .filter((r) => r.Sakit > 0 || r.Ijin > 0 || r.Dispen > 0 || r.Alpa > 0);
 
     res.json({ success: true, data: rekap, meta: { start, end, kelas_id: kelas_id || null } });
   } catch (error) {
